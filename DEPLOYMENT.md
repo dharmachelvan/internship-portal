@@ -1,16 +1,29 @@
-# Deployment checklist
+# Deployment guide
 
-## Render / Railway / Fly.io style Node deployment
+## Recommended: Render
 
-1. Push the repository to GitHub.
-2. Create a Node web service.
-3. Build command: `npm install`.
-4. Start command: `npm start`.
-5. The app reads `PORT` from the hosting platform.
-6. Run `npm run seed` once if the deployment environment starts with an empty database.
-7. Confirm `/api/health` returns `{"success":true,...}`.
-8. Open the root URL and test search, filtering, details, and application submission.
+The full application can run as one Node.js web service.
 
-## Important persistence note
+1. Connect the GitHub repository to Render.
+2. Create a **Web Service**.
+3. Branch: `main`.
+4. Build command: `npm install`.
+5. Start command: `npm start`.
+6. Health check path: `/api/health`.
+7. Deploy.
+8. Open the generated `onrender.com` URL and test the board.
 
-SQLite is ideal for this learning project and local development. On hosting providers with ephemeral disks, a SQLite database can reset during redeploys. For a production capstone, move the database to PostgreSQL and store uploaded resumes in object storage rather than accepting arbitrary file uploads.
+## Vercel
+
+The repository includes `api/index.js` and `vercel.json` for Vercel.
+
+1. Import the GitHub repository into Vercel.
+2. Keep the root directory as the repository root.
+3. Use the default Node.js detection.
+4. Deploy.
+5. Open the deployment URL.
+6. Verify `/api/health`.
+
+### Important SQLite note
+
+Vercel's serverless filesystem is not a durable database. The app therefore stores the Vercel demo SQLite file under `/tmp`. Data can disappear when the function instance is replaced. For real persistent data, use PostgreSQL/Supabase.

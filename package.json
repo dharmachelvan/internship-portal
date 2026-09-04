@@ -1,18 +1,20 @@
 {
   "name": "internship-portal",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Responsive full-stack internship portal with Express and SQLite",
-  "main": "backend/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "node --watch backend/server.js",
-    "seed": "node backend/seed.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node seed.js",
     "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "better-sqlite3": "^12.4.1"
-  },
-  "devDependencies": {}
+  }
 }

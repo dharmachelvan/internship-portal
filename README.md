@@ -1,8 +1,8 @@
-Add these screenshots after running the project:
+# Screenshots
 
-- desktop.png — desktop layout
-- tablet.png — tablet layout
-- mobile.png — mobile layout
+Add your final desktop, tablet, and mobile screenshots here before submission.
 
-Recommended README caption:
-“Responsive internship board tested at desktop, tablet, and mobile widths.”
+Suggested names:
+- `desktop.png`
+- `tablet.png`
+- `mobile.png`

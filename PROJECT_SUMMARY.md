@@ -1,10 +1,29 @@
-# What is already built
+# Project Summary
 
-This repository covers the complete progression of the supplied internship project:
+## Internship Portal
 
-- Task 02: responsive internship board
-- Task 03: REST API + SQLite persistence
-- Task 04: secure application integration
-- Task 05: production-ready capstone foundation
+A responsive internship discovery and application portal designed to demonstrate full-stack fundamentals.
 
-The frontend uses no framework. The backend uses Express and SQLite.
+### Frontend
+- HTML5 semantic structure
+- Responsive CSS without a framework
+- Vanilla JavaScript DOM rendering
+- Search, domain filters, pagination
+- Accessible labels, focus states, and dialogs
+
+### Backend
+- Node.js + Express
+- RESTful CRUD endpoints
+- Validation and consistent error responses
+- Application endpoint with duplicate protection
+- Helmet security headers
+
+### Data
+- SQLite schema with internships and applications
+- Seed records included
+- Automatic seed on first empty database initialization
+
+### Deployment
+- Vercel serverless entry point included
+- Render web-service configuration included
+- Production note: use PostgreSQL/Supabase for durable persistent data

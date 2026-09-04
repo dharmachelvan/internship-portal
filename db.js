@@ -2,16 +2,17 @@ const Database = require("better-sqlite3");
 const fs = require("fs");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "..", "data");
+// Vercel's function filesystem is read-only except for /tmp.
+// Render/local development can use the project's data directory.
+const dataDir = process.env.VERCEL
+  ? "/tmp/internship-portal-data"
+  : path.join(__dirname, "data");
+
 fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new Database(path.join(dataDir, "internships.db"));
 db.pragma("foreign_keys = ON");
 
-const schema = fs.readFileSync(
-  path.join(__dirname, "..", "database", "schema.sql"),
-  "utf8"
-);
-db.exec(schema);
+db.exec(fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8"));
 
 module.exports = db;
