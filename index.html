@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find and apply for internships across engineering, data, design, marketing, business, security, and AI/ML.">
+  <title>Internship Board</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="Internship Board home">
+        <span class="brand-mark" aria-hidden="true">IB</span>
+        <span>Internship Board</span>
+      </a>
+      <a class="nav-link" href="#internships">Browse internships</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">FIND YOUR NEXT OPPORTUNITY</p>
+          <h1 id="page-title">Build skills. Gain experience. Start your career.</h1>
+          <p class="hero-copy">Explore curated internships from fictional companies across technology, business, design, data, and more.</p>
+          <a class="button primary" href="#internships">Explore internships</a>
+        </div>
+        <aside class="hero-card" aria-label="Internship board highlights">
+          <div class="hero-stat"><strong id="hero-count">—</strong><span>open listings</span></div>
+          <div class="hero-stat"><strong>8</strong><span>career domains</span></div>
+          <div class="hero-stat"><strong>100%</strong><span>beginner friendly</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="board-section" id="internships" aria-labelledby="board-title">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">INTERNSHIP BOARD</p>
+            <h2 id="board-title">Find an internship</h2>
+          </div>
+          <p id="results-count" class="results-count" aria-live="polite"></p>
+        </div>
+
+        <form id="filter-form" class="filters" role="search">
+          <div class="field search-field">
+            <label for="search">Search internships</label>
+            <input id="search" name="search" type="search" placeholder="Try “Python”, “design”, or “remote”" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="domain">Domain</label>
+            <select id="domain" name="domain">
+              <option value="">All domains</option>
+            </select>
+          </div>
+
+          <button class="button secondary" type="submit">Search</button>
+          <button class="button ghost" id="clear-filters" type="button">Clear</button>
+        </form>
+
+        <div id="error-state" class="state error-state" role="alert" hidden>
+          <h3>We couldn't load internships</h3>
+          <p>Please check your connection and try again.</p>
+          <button class="button secondary" id="retry" type="button">Try again</button>
+        </div>
+
+        <div id="empty-state" class="state" hidden>
+          <div class="empty-icon" aria-hidden="true">⌕</div>
+          <h3>No internships found</h3>
+          <p>Try another search term or clear the filters.</p>
+        </div>
+
+        <div id="loading-state" class="state" aria-live="polite">Loading internships…</div>
+        <div id="internship-grid" class="card-grid" aria-live="polite"></div>
+        <nav id="pagination" class="pagination" aria-label="Internship pages"></nav>
+      </div>
+    </section>
+
+    <section class="why-section" aria-labelledby="why-title">
+      <div class="container">
+        <p class="eyebrow">WHY USE THE BOARD?</p>
+        <h2 id="why-title">A simple path from discovery to application.</h2>
+        <div class="feature-grid">
+          <article><span>01</span><h3>Discover</h3><p>Search opportunities by domain, skills, location, and keywords.</p></article>
+          <article><span>02</span><h3>Compare</h3><p>Review duration, stipend, skills, and role details before applying.</p></article>
+          <article><span>03</span><h3>Apply</h3><p>Send a validated application directly through the portal.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="details-dialog" class="dialog" aria-labelledby="details-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" id="close-details" type="button" aria-label="Close internship details">×</button>
+      <p class="eyebrow" id="details-domain"></p>
+      <h2 id="details-title"></h2>
+      <p id="details-company" class="dialog-company"></p>
+      <div id="details-meta" class="meta-list"></div>
+      <p id="details-description"></p>
+      <div id="details-skills" class="chips"></div>
+      <button class="button primary" id="open-application" type="button">Apply for this internship</button>
+    </div>
+  </dialog>
+
+  <dialog id="application-dialog" class="dialog" aria-labelledby="application-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" id="close-application" type="button" aria-label="Close application form">×</button>
+      <p class="eyebrow">APPLICATION</p>
+      <h2 id="application-title">Apply now</h2>
+      <p id="application-role" class="dialog-company"></p>
+
+      <form id="application-form" novalidate>
+        <input type="hidden" id="application-internship-id" name="internship_id">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="app-name">Full name <span aria-hidden="true">*</span></label>
+            <input id="app-name" name="name" required minlength="2" maxlength="80" autocomplete="name">
+            <small class="field-error" id="error-name"></small>
+          </div>
+          <div class="field">
+            <label for="app-email">Email <span aria-hidden="true">*</span></label>
+            <input id="app-email" name="email" type="email" required autocomplete="email">
+            <small class="field-error" id="error-email"></small>
+          </div>
+          <div class="field">
+            <label for="app-phone">Phone <span aria-hidden="true">*</span></label>
+            <input id="app-phone" name="phone" required autocomplete="tel">
+            <small class="field-error" id="error-phone"></small>
+          </div>
+          <div class="field">
+            <label for="app-resume">Resume URL <span aria-hidden="true">*</span></label>
+            <input id="app-resume" name="resume_url" type="url" placeholder="https://..." required>
+            <small class="field-error" id="error-resume_url"></small>
+          </div>
+          <div class="field full">
+            <label for="app-cover">Cover note <span aria-hidden="true">*</span></label>
+            <textarea id="app-cover" name="cover_note" rows="5" maxlength="1500" required placeholder="Tell the company why you're a good fit."></textarea>
+            <small class="field-error" id="error-cover_note"></small>
+          </div>
+        </div>
+
+        <div id="application-message" class="form-message" role="alert" hidden></div>
+        <button class="button primary" type="submit">Submit application</button>
+      </form>
+    </div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div><strong>Internship Board</strong><p>Practice project for responsive full-stack development.</p></div>
+      <p>© 2026 Internship Board</p>
+    </div>
+  </footer>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
