@@ -6,3 +6,4 @@ Suggested names:
 - `desktop.png`
 - `tablet.png`
 - `mobile.png`
+GitHub Pages deployment test.
