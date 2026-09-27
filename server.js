@@ -8,9 +8,77 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false }));
+
+// The frontend is served from this same application, so CORS is disabled by
+// default. Set ALLOWED_ORIGIN to the exact frontend origin when cross-origin
+// access is required.
+app.use((req, res, next) => {
+  const origin = req.get("Origin");
+  const allowedOrigin = process.env.ALLOWED_ORIGIN;
+  if (origin && allowedOrigin && origin === allowedOrigin) {
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Vary", "Origin");
+  }
+  if (req.method === "OPTIONS") {
+    return allowedOrigin && origin === allowedOrigin
+      ? res.status(204).end()
+      : res.status(403).end();
+  }
+  next();
+});
+
+function createRateLimiter({ windowMs, max, message }) {
+  const clients = new Map();
+
+  const cleanup = setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of clients) {
+      if (entry.resetAt <= now) clients.delete(key);
+    }
+  }, Math.min(windowMs, 60_000));
+  cleanup.unref();
+
+  return (req, res, next) => {
+    const forwarded = req.get("x-forwarded-for");
+    const key = (forwarded ? forwarded.split(",")[0].trim() : req.ip) || "unknown";
+    const now = Date.now();
+    let entry = clients.get(key);
+
+    if (!entry || entry.resetAt <= now) {
+      entry = { count: 0, resetAt: now + windowMs };
+      clients.set(key, entry);
+    }
+
+    entry.count += 1;
+    res.setHeader("X-RateLimit-Limit", max);
+    res.setHeader("X-RateLimit-Remaining", Math.max(0, max - entry.count));
+
+    if (entry.count > max) {
+      res.setHeader("Retry-After", Math.ceil((entry.resetAt - now) / 1000));
+      return fail(res, 429, "RATE_LIMITED", message);
+    }
+
+    next();
+  };
+}
+
+const apiRateLimit = createRateLimiter({
+  windowMs: 60_000,
+  max: 120,
+  message: "Too many API requests. Please try again shortly."
+});
+
+const applicationRateLimit = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 10,
+  message: "Too many application attempts. Please try again later."
+});
 
 function ok(res, data, status = 200, extra = {}) {
   return res.status(status).json({ success: true, data, ...extra });
@@ -28,6 +96,8 @@ function serialize(row) {
   try { skills = JSON.parse(row.skills || "[]"); } catch { skills = []; }
   return { ...row, skills };
 }
+
+app.use("/api", apiRateLimit);
 
 function seedIfEmpty() {
   const count = db.prepare("SELECT COUNT(*) AS count FROM internships").get().count;
@@ -117,7 +187,7 @@ app.delete("/api/internships/:id", (req, res) => {
   return ok(res, { deleted: true, id });
 });
 
-app.post("/api/applications", (req, res) => {
+app.post("/api/applications", applicationRateLimit, (req, res) => {
   const result = validateApplication(req.body || {});
   if (!result.valid) return fail(res, 422, "VALIDATION_ERROR", "Please correct the highlighted fields.", result.fields);
   if (!db.prepare("SELECT id FROM internships WHERE id = ?").get(result.value.internship_id)) {

@@ -46,6 +46,33 @@ async function fetchJSON(url, options = {}) {
   return payload;
 }
 
+
+function validateApplicationClient(payload) {
+  const fields = {};
+  const name = String(payload.name || "").trim();
+  const email = String(payload.email || "").trim().toLowerCase();
+  const phone = String(payload.phone || "").trim();
+  const resumeUrl = String(payload.resume_url || "").trim();
+  const coverNote = String(payload.cover_note || "").trim();
+
+  if (name.length < 2 || name.length > 80) fields.name = "Name must be 2–80 characters.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fields.email = "Enter a valid email address.";
+  if (!/^[0-9+\-\s()]{7,20}$/.test(phone)) fields.phone = "Enter a valid phone number.";
+  if (!/^https?:\/\/\S+$/i.test(resumeUrl)) fields.resume_url = "Enter a valid resume URL.";
+  if (coverNote.length < 10 || coverNote.length > 1500) fields.cover_note = "Cover note must be 10–1500 characters.";
+
+  return fields;
+}
+
+function displayFieldErrors(fields) {
+  Object.entries(fields).forEach(([field, message]) => {
+    const errorElement = document.querySelector(`#error-${field}`);
+    const input = document.querySelector(`[name="${field}"]`);
+    if (errorElement) errorElement.textContent = message;
+    if (input) input.setAttribute("aria-invalid", "true");
+  });
+}
+
 async function loadDomains() {
   try {
     const result = await fetchJSON("/api/domains");
@@ -242,6 +269,15 @@ document.querySelector("#application-form").addEventListener("submit", async eve
 
   const form = new FormData(event.currentTarget);
   const payload = Object.fromEntries(form.entries());
+  const clientErrors = validateApplicationClient(payload);
+
+  if (Object.keys(clientErrors).length) {
+    displayFieldErrors(clientErrors);
+    showMessage("Please correct the highlighted fields.", false);
+    const firstInvalid = document.querySelector('[aria-invalid="true"]');
+    firstInvalid?.focus();
+    return;
+  }
 
   try {
     const result = await fetchJSON("/api/applications", {
@@ -254,12 +290,7 @@ document.querySelector("#application-form").addEventListener("submit", async eve
     document.querySelector("#application-internship-id").value = state.selected?.id || "";
   } catch (error) {
     const fields = error.payload?.error?.fields || {};
-    Object.entries(fields).forEach(([field, message]) => {
-      const errorElement = document.querySelector(`#error-${field}`);
-      const input = document.querySelector(`[name="${field}"]`);
-      if (errorElement) errorElement.textContent = message;
-      if (input) input.setAttribute("aria-invalid", "true");
-    });
+    displayFieldErrors(fields);
     showMessage(error.message, false);
   }
 });

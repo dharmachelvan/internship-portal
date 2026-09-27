@@ -121,27 +121,27 @@
         <div class="form-grid">
           <div class="field">
             <label for="app-name">Full name <span aria-hidden="true">*</span></label>
-            <input id="app-name" name="name" required minlength="2" maxlength="80" autocomplete="name">
+            <input id="app-name" name="name" required minlength="2" maxlength="80" autocomplete="name" aria-describedby="error-name">
             <small class="field-error" id="error-name"></small>
           </div>
           <div class="field">
             <label for="app-email">Email <span aria-hidden="true">*</span></label>
-            <input id="app-email" name="email" type="email" required autocomplete="email">
+            <input id="app-email" name="email" type="email" required autocomplete="email" aria-describedby="error-email">
             <small class="field-error" id="error-email"></small>
           </div>
           <div class="field">
             <label for="app-phone">Phone <span aria-hidden="true">*</span></label>
-            <input id="app-phone" name="phone" required autocomplete="tel">
+            <input id="app-phone" name="phone" required autocomplete="tel" aria-describedby="error-phone">
             <small class="field-error" id="error-phone"></small>
           </div>
           <div class="field">
             <label for="app-resume">Resume URL <span aria-hidden="true">*</span></label>
-            <input id="app-resume" name="resume_url" type="url" placeholder="https://..." required>
+            <input id="app-resume" name="resume_url" type="url" placeholder="https://..." required aria-describedby="error-resume_url">
             <small class="field-error" id="error-resume_url"></small>
           </div>
           <div class="field full">
             <label for="app-cover">Cover note <span aria-hidden="true">*</span></label>
-            <textarea id="app-cover" name="cover_note" rows="5" maxlength="1500" required placeholder="Tell the company why you're a good fit."></textarea>
+            <textarea id="app-cover" name="cover_note" rows="5" maxlength="1500" required placeholder="Tell the company why you're a good fit." aria-describedby="error-cover_note"></textarea>
             <small class="field-error" id="error-cover_note"></small>
           </div>
         </div>
